@@ -22,7 +22,7 @@ class Profile(models.Model):
 	area = models.CharField(max_length=255)
 	street = models.CharField(max_length=255)
 	house = models.CharField(max_length=255)
-	block = models.IntegerField()
+	block = models.IntegerField(default=1)
 	shipping_address = models.TextField(null = True, blank = True)
 
 class Cart(models.Model):
@@ -79,26 +79,14 @@ class Review(models.Model):
 def create_profile(instance, created, **kwargs):
 	if created:
 		Profile.objects.create(user=instance)
-
-@receiver(pre_save, sender=User)
-def get_full_name(instance, *args, **kwargs):
-	instance.profile.full_name = "%s %s"%(instance.first_name, instance.last_name)
-
-
-
-@receiver(post_save, sender=User)
-def create_profile(instance, created, **kwargs):
-	if created:
-		Profile.objects.create(user=instance)
 		
-
 @receiver(pre_save, sender = Order)
 def get_billing_address(instance, *args, **kwargs):
-	instance.billing_address = "Area: %s, Block: %s, Street: %s, House: %s"%(self.area, self.block, self.street, self.house)
+	instance.billing_address = "Area: %s, Block: %s, Street: %s, House: %s"%(instance.area, instance.block, instance.street, instance.house)
 
 @receiver(pre_save, sender = Profile)
 def get_shipping_address(instance, *args, **kwargs):
-	instance.shipping_address = "Area: %s, Block: %s, Street: %s, House: %s"%(self.area, self.block, self.street, self.house)
+	instance.shipping_address = "Area: %s, Block: %s, Street: %s, House: %s"%(instance.area, instance.block, instance.street, instance.house)
 
 
 
