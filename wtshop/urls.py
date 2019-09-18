@@ -8,14 +8,17 @@ from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
 router.register("cart", views.CartAPIView)
+router.register("cartitem", views.CartItemView)
+router.register("profile", views.ProfileView)
+router.register("review", views.ReviewView)
+router.register("product", views.ListAPIView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('product-list/', views.ListAPIView.as_view(), name='list'),
-    path('product-detail/<int:product_id>/', views.DetailAPIView.as_view(), name='detail'),
     path('register/', views.UserCreateAPIView.as_view(), name='register'),
-    path('login/', TokenObtainPairView.as_view(), name='register'),
+    path('login/', TokenObtainPairView.as_view(), name='login'),
+    path('checkout/', views.CartStatus.as_view(), name='checkout'),
     path('', include(router.urls))
 ]
 
