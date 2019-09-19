@@ -31,7 +31,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class ListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Product
-		fields = ['item', 'image', 'price', 'description', 'manufacturer', 'date_added']
+		fields = ['id', 'item', 'image', 'price', 'description', 'manufacturer', 'date_added']
 
 class DetailSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -39,7 +39,6 @@ class DetailSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class CartItemSerializer(serializers.ModelSerializer):
-	
 	class Meta:
 		model = CartItem
 		fields = ['product', 'quantity', 'cart']
@@ -48,9 +47,9 @@ class CartSerializer(serializers.ModelSerializer):
 	cart_items = serializers.SerializerMethodField()
 	class Meta: 
 		model = Cart
-		fields = ['user', 'cart_items', 'subtotal', 'status']
+		fields = ['id', 'user', 'cart_items', 'subtotal', 'status']
 	def get_cart_items(self, obj):
-		cartitem = CartItem.objects.all()
+		cartitem = CartItem.objects.all().filter(cart = obj.id)
 		return CartItemSerializer(cartitem, many=True).data
 
 class UserSerializer(serializers.ModelSerializer):
@@ -71,6 +70,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 		return CartSerializer(order, many=True).data
 
 class ReviewSerializer(serializers.ModelSerializer):
+	average_rating = serializers.SerializerMethodField()
 	class Meta:
 		model = Review
 		fields = ['item', 'rating', 'comments', 'average_rating']

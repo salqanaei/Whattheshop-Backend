@@ -66,7 +66,7 @@ class Review(models.Model):
 	item = models.ForeignKey(Product, on_delete=models.CASCADE)
 	user = models.ForeignKey(User, on_delete=models.PROTECT)
 	rating = models.IntegerField(choices=RATING_CHOICES)
-	comments = models.TextField(null = True, blank = True)
+	comments = models.TextField()
 
 @receiver(post_save, sender=CartItem)
 def add_price(instance, *args, **kwargs):

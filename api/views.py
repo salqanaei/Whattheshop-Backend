@@ -6,7 +6,8 @@ from .models import *
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from .permissions import IsCreator
 
 class UserCreateAPIView(CreateAPIView):
 	serializer_class = UserCreateSerializer
@@ -16,12 +17,14 @@ class ListAPIView(ModelViewSet):
 	serializer_class = ListSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'product_id'
+	permission_classes = [AllowAny]
 
 class CartAPIView(ModelViewSet):
 	queryset = Cart.objects.all()
 	serializer_class = CartSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'cart_id'
+	permission_classes = [AllowAny]
 
 	def perform_create(self, serializer):
 		serializer.save(user=self.request.user)
@@ -37,9 +40,9 @@ class CartItemView(ModelViewSet):
 	serializer_class = CartItemSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'cartitem_id'
+	permission_classes = [AllowAny]
 	def create(self, request, *args, **kwargs):
 		cart, created = Cart.objects.get_or_create(status='cart', user = request.user)
-		print(cart.id)
 		cart_item = cart.cartitems.filter(product_id=request.data['product'])
 		if not cart_item:
 			data = {"product" : request.data['product'], "quantity":request.data['quantity'], "cart": cart.id}
@@ -68,6 +71,12 @@ class ProfileView(ModelViewSet):
 	serializer_class = ProfileSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'profile_id'
+	# permission_classes = [IsAuthenticated, IsAdminUser]
+
+	def get_queryset(self):
+		user = self.request.user
+		queryset = self.queryset.filter(user=user)
+		return queryset
 
 class ReviewView(ModelViewSet):
 	queryset = Review.objects.all()
