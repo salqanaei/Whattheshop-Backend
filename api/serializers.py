@@ -41,7 +41,7 @@ class DetailSerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CartItem
-		fields = ['product', 'quantity', 'cart']
+		fields = ['id', 'product', 'quantity', 'cart']
 
 class CartSerializer(serializers.ModelSerializer):
 	cart_items = serializers.SerializerMethodField()
@@ -79,5 +79,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 		rating = Review.objects.filter(item = obj.item)
 
 		return rating.aggregate(Avg('rating'))
+
+class AddressSerializer(serializers.ModelSerializer):
+	class Meta:
+		model: Address
+		fields = '__all__'
 		 
 
