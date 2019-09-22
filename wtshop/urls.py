@@ -12,6 +12,7 @@ router.register("cartitem", views.CartItemView)
 router.register("profile", views.ProfileView)
 router.register("review", views.ReviewView)
 router.register("product", views.ListAPIView)
+router.register("remove", views.CartItemDelete)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

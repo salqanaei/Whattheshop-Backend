@@ -52,7 +52,6 @@ class CartItemSerializer(serializers.ModelSerializer):
 		return obj.product.price
 
 
-
 class CartSerializer(serializers.ModelSerializer):
 	cart_items = serializers.SerializerMethodField()
 	class Meta: 
@@ -92,5 +91,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 		rating = Review.objects.filter(item = obj.item)
 
 		return rating.aggregate(Avg('rating'))
+
+class AddressSerializer(serializers.ModelSerializer):
+	class Meta:
+		model: Address
+		fields = '__all__'
 		 
 
