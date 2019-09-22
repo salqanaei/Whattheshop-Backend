@@ -39,18 +39,30 @@ class DetailSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class CartItemSerializer(serializers.ModelSerializer):
+	product_name = serializers.SerializerMethodField()
+	price = serializers.SerializerMethodField()
 	class Meta:
 		model = CartItem
-		fields = ['id', 'product', 'quantity', 'cart']
+		fields = ['product_name', 'product', 'quantity', 'cart', 'price']
+	
+	def get_product_name(self, obj):
+		return obj.product.item
+
+	def get_price(self, obj):
+		return obj.product.price
+
 
 class CartSerializer(serializers.ModelSerializer):
 	cart_items = serializers.SerializerMethodField()
 	class Meta: 
 		model = Cart
-		fields = ['id', 'user', 'cart_items', 'subtotal', 'status']
+		fields = ['id', 'cart_items', 'subtotal', 'status']
+	
 	def get_cart_items(self, obj):
 		cartitem = CartItem.objects.all().filter(cart = obj.id)
 		return CartItemSerializer(cartitem, many=True).data
+
+
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
