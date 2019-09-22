@@ -76,7 +76,7 @@ def add_price(instance, *args, **kwargs):
 	instance.cart.subtotal = total
 	instance.cart.save()
 
-@receiver(pre_delete, sender=Cart)
+@receiver(pre_delete, sender=CartItem)
 def deduct_price(instance, *args, **kwargs):
 		cart = instance.cart
 		cart.subtotal -= instance.product.price*instance.quantity
