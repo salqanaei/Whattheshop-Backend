@@ -41,9 +41,6 @@ class CartItem(models.Model):
 	quantity = models.IntegerField()
 	cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cartitems')
 
-	def __str__(self):
-		return self.product.item
-
 class Address(models.Model):
 	CHOICES = (
 		('billing', 'billing'),

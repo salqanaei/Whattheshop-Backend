@@ -44,7 +44,6 @@ class CartItemView(ModelViewSet):
 	lookup_field = 'id'
 	lookup_url_kwarg = 'cartitem_id'
 	permission_classes = [AllowAny]
-
 	def create(self, request, *args, **kwargs):
 		cart, created = Cart.objects.get_or_create(status='cart', user = request.user)
 		cart_item = cart.cartitems.filter(product_id=request.data['product'])
