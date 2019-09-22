@@ -16,12 +16,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = User
-		fields = ['username', 'password', 'access']
+		fields = ['first_name', 'last_name','username', 'password', 'access']
 
 	def create(self, validated_data):
+		first_name = validated_data['first_name']
+		last_name = validated_data['last_name']
 		username = validated_data['username']
 		password = validated_data['password']
-		new_user = User(username=username)
+		new_user = User(username=username, first_name=first_name, last_name=last_name)
 		new_user.set_password(password)
 		new_user.save()
 		validated_data["access"] = get_token(new_user)
@@ -39,9 +41,15 @@ class DetailSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class CartItemSerializer(serializers.ModelSerializer):
+	price = serializers.SerializerMethodField()
+	item = serializers.SerializerMethodField()
 	class Meta:
 		model = CartItem
-		fields = ['id', 'product', 'quantity', 'cart']
+		fields = ['id', 'product', 'quantity', 'cart', 'item', 'price']
+	def get_item(self, obj):
+		return obj.product.item
+	def get_price(self, obj):
+		return obj.product.price
 
 class CartSerializer(serializers.ModelSerializer):
 	cart_items = serializers.SerializerMethodField()

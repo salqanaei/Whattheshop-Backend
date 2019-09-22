@@ -32,9 +32,6 @@ class CartAPIView(ModelViewSet):
 	def get_queryset(self):
 		user = self.request.user
 		queryset = self.queryset.filter(user=user, status = 'cart')
-		print('print', queryset)
-		print(user)
-
 		return queryset
 
 
@@ -61,12 +58,11 @@ class CartItemView(ModelViewSet):
 
 	def destroy(self, request, *args, **kwargs):
 		cart = Cart.objects.get(status='cart', user = request.user)
-		print('10', request.user)
-		print('3', kwargs)
-		print('5', cart)
+
 		cart_item = cart.cartitems.filter(id=kwargs['cartitem_id'])
-		print('300', cart_item[0].id)
-		print('200', cart_item)
+
+		
+
 		if (cart_item) and (cart_item[0].quantity>1):
 			cart_item[0].quantity -= 1
 			cart_item[0].save()
@@ -74,6 +70,13 @@ class CartItemView(ModelViewSet):
 		else: 
 			cart_item.delete()
 			return Response({'status': 'success'}, status=status.HTTP_204_NO_CONTENT)
+
+	def get_queryset(self):
+		user = self.request.user
+		cart = Cart.objects.get(status='cart', user = self.request.user)
+		queryset = self.queryset.filter(cart = cart.id)
+		return queryset
+
 
 class CartItemDelete(ModelViewSet):
 	queryset = CartItem.objects.all()
