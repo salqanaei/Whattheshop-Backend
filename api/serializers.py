@@ -51,6 +51,11 @@ class CartItemSerializer(serializers.ModelSerializer):
 	def get_price(self, obj):
 		return obj.product.price
 
+class CartItemUpdateSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = CartItem
+		fields = ['quantity']
+
 class CartSerializer(serializers.ModelSerializer):
 	cart_items = serializers.SerializerMethodField()
 	class Meta: 
@@ -74,7 +79,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 		fields = ['user', 'past_orders']
 
 	def get_past_orders(self, obj):
-		order = Cart.objects.filter(user=obj.user).exclude(status = 'cart')
+		order = Cart.objects.filter(user=obj.user, status = 'placed')
 		return CartSerializer(order, many=True).data
 
 class ReviewSerializer(serializers.ModelSerializer):

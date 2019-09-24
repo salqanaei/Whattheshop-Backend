@@ -25,7 +25,7 @@ class Profile(models.Model):
 class Cart(models.Model):
 	ORDER_STATUS = [('cart', 'cart'),
 		('placed', 'Placed'),
-		('paid', 'Paid'),
+		('review', 'review'),
 		('shipped', 'Shipped'),
 		('delivered', 'Delivered')]
 	subtotal = models.DecimalField(max_digits=10, decimal_places=3, default=0)
@@ -35,6 +35,13 @@ class Cart(models.Model):
 	billing_address = models.TextField(null = True, blank = True)
 	date_added = models.DateTimeField(auto_now_add = True, null=True, blank=True)
 
+class Payment(models.Model):
+	PAYMENT_CARD = [
+	('Knet', 'Knet'),
+	('Visa', "Visa"),
+	('MC', 'MC')]
+
+	method = models.CharField(max_length=120, choices=PAYMENT_CARD)
 
 class CartItem(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product')
