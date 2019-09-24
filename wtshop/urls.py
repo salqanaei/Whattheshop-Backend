@@ -13,13 +13,15 @@ router.register("profile", views.ProfileView)
 router.register("review", views.ReviewView)
 router.register("product", views.ListAPIView)
 router.register("remove", views.CartItemDelete)
+router.register("revieworder", views.ReviewOrder)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('register/', views.UserCreateAPIView.as_view(), name='register'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
-    path('checkout/', views.CartStatus.as_view(), name='checkout'),
+    path('checkout/', views.CartStatusCheckout.as_view(), name='checkout'),
+    path('revorder/', views.CartStatus.as_view(), name='review'),
     path('', include(router.urls))
 ]
 

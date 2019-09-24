@@ -1,7 +1,7 @@
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from .serializers import AddressSerializer, ReviewSerializer, ProfileSerializer, UserCreateSerializer, ListSerializer, DetailSerializer, CartSerializer, CartItemSerializer
+from .serializers import CartItemUpdateSerializer, AddressSerializer, ReviewSerializer, ProfileSerializer, UserCreateSerializer, ListSerializer, DetailSerializer, CartSerializer, CartItemSerializer
 from .models import *
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -33,6 +33,14 @@ class CartAPIView(ModelViewSet):
 		user = self.request.user
 		queryset = self.queryset.filter(user=user, status = 'cart')
 		return queryset
+	def create(self, request, *args, **kwargs):
+		cart, created = Cart.objects.get_or_create(status='cart', user = request.user)
+		data = {"product" : request.data['product'], "quantity":request.data['quantity'], "cart": cart.id}
+		serializer = self.get_serializer(data=data)
+		serializer.is_valid(raise_exception=True)
+		self.perform_create(serializer)
+		headers = self.get_success_headers(serializer.data)
+		return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class CartItemView(ModelViewSet):
@@ -58,11 +66,7 @@ class CartItemView(ModelViewSet):
 
 	def destroy(self, request, *args, **kwargs):
 		cart = Cart.objects.get(status='cart', user = request.user)
-
 		cart_item = cart.cartitems.filter(id=kwargs['cartitem_id'])
-
-		
-
 		if (cart_item) and (cart_item[0].quantity>1):
 			cart_item[0].quantity -= 1
 			cart_item[0].save()
@@ -76,6 +80,12 @@ class CartItemView(ModelViewSet):
 		cart = Cart.objects.get(status='cart', user = self.request.user)
 		queryset = self.queryset.filter(cart = cart.id)
 		return queryset
+
+	def get_serializer_class(self):
+		if self.request.method == 'PUT':
+			return CartItemUpdateSerializer
+		else:
+			return CartItemSerializer
 
 
 class CartItemDelete(ModelViewSet):
@@ -91,6 +101,16 @@ class CartStatus(APIView):
 
 	def get(self, request, format=None):
 		cart = Cart.objects.get(status='cart', user = request.user)
+		cart.status = 'review'
+		cart.save()
+		return Response({'status': 'success' }, status=status.HTTP_201_CREATED)
+
+class CartStatusCheckout(APIView):
+	queryset = CartItem.objects.all()
+	serializer_class = CartSerializer
+
+	def get(self, request, format=None):
+		cart = Cart.objects.get(status='review', user = request.user)
 		cart.status = 'placed'
 		cart.save()
 		return Response({'status': 'success' }, status=status.HTTP_201_CREATED)
@@ -100,7 +120,7 @@ class ProfileView(ModelViewSet):
 	serializer_class = ProfileSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'profile_id'
-	# permission_classes = [IsAuthenticated, IsAdminUser]
+	permission_classes = [IsAuthenticated]
 
 	def get_queryset(self):
 		user = self.request.user
@@ -117,7 +137,7 @@ class ReviewView(ModelViewSet):
 		serializer.save(user=self.request.user)
 
 class AddressViewSet(ModelViewSet):
-	model = Address
+	queryset = Address.objects.all()
 	serializer_class = AddressSerializer
 
 	def get_queryset(self,):
@@ -126,4 +146,8 @@ class AddressViewSet(ModelViewSet):
 
 	def perform_create(self, serializer):
 		serializer.save(user=self.request.user)
+
+class ReviewOrder(ModelViewSet):
+	queryset = Cart.objects.filter(status = 'review')
+	serializer_class = CartSerializer
 
