@@ -33,7 +33,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class ListSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Product
-		fields = ['id', 'item', 'image', 'price', 'description', 'manufacturer', 'date_added']
+		fields = ['id', 'item', 'image', 'price', 'description', 'manufacturer', 'date_added', 'sound']
 
 class DetailSerializer(serializers.ModelSerializer):
 	class Meta:

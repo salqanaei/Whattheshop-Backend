@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from .permissions import IsCreator
 
+
 class UserCreateAPIView(CreateAPIView):
 	serializer_class = UserCreateSerializer
 
@@ -76,10 +77,10 @@ class CartItemView(ModelViewSet):
 			return Response({'status': 'success'}, status=status.HTTP_204_NO_CONTENT)
 
 	def get_queryset(self):
-		user = self.request.user
-		cart = Cart.objects.get(status='cart', user = self.request.user)
+		cart, created = Cart.objects.get_or_create(status='cart', user = self.request.user)
 		queryset = self.queryset.filter(cart = cart.id)
 		return queryset
+		
 
 	def get_serializer_class(self):
 		if self.request.method == 'PUT':
