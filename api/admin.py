@@ -8,4 +8,5 @@ admin.site.register(Review)
 admin.site.register(Profile)
 admin.site.register(CartItem)
 admin.site.register(Payment)
+admin.site.register(Address)
 

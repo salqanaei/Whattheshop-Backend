@@ -57,10 +57,10 @@ class Address(models.Model):
 	street = models.CharField(max_length=255)
 	house = models.CharField(max_length=255)
 	block = models.IntegerField()
-	complete_Address = models.TextField()
+	complete_address = models.TextField(null=True, blank=True)
 	address_type = models.CharField(max_length=120, choices=CHOICES, default='created')
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address_user')
-	cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='address_cart')
+	
 
 class Review(models.Model):
 	RATING_CHOICES = (
@@ -95,7 +95,7 @@ def create_profile(instance, created, **kwargs):
 		Profile.objects.create(user=instance)
 		
 @receiver(pre_save, sender = Address)
-def get_billing_address(instance, *args, **kwargs):
+def get_complete_address(instance, *args, **kwargs):
 	instance.complete_address = "Area: %s, Block: %s, Street: %s, House: %s"%(instance.area, instance.block, instance.street, instance.house)
 
 
