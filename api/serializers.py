@@ -95,7 +95,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class AddressSerializer(serializers.ModelSerializer):
 	class Meta:
-		model: Address
+		model = Address
 		fields = '__all__'
 		 
 

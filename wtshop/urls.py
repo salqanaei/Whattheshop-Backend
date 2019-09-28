@@ -14,6 +14,7 @@ router.register("review", views.ReviewView)
 router.register("product", views.ListAPIView)
 router.register("remove", views.CartItemDelete)
 router.register("revieworder", views.ReviewOrder)
+router.register("address", views.AddressViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,6 +23,7 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='login'),
     path('checkout/', views.CartStatusCheckout.as_view(), name='checkout'),
     path('revorder/', views.CartStatus.as_view(), name='review'),
+    path('return/', views.CartStatusReturn.as_view(), name='review'),
     path('', include(router.urls))
 ]
 
